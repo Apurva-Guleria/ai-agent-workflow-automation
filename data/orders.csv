@@ -1,0 +1,5 @@
+order_id,customer_name,product_name,status,estimated_delivery
+ORD001,John,Laptop,Shipped,2026-10-08
+ORD002,Sarah,Wireless Mouse,Processing,2026-10-10
+ORD003,David,Keyboard,Delivered,2026-10-03
+ORD004,Emma,Monitor,Shipped,2026-10-09

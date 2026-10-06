@@ -1,0 +1,16 @@
+execution_id,workflow_id,status,duration_seconds,error
+EX001,WF001,success,2.4,
+EX002,WF002,success,1.8,
+EX003,WF003,failure,2.1,Invalid vendor row
+EX004,WF004,success,8.5,
+EX005,WF005,failure,1.5,Order not found
+EX006,WF006,success,3.2,
+EX007,WF007,success,7.8,
+EX008,WF008,success,1.2,
+EX009,WF009,success,2.0,
+EX010,WF010,failure,1.9,Invalid log format
+EX011,WF003,failure,2.4,Missing required column
+EX012,WF005,failure,1.3,Order not found
+EX013,WF003,success,2.0,
+EX014,WF007,success,7.1,
+EX015,WF005,failure,1.6,Order not found

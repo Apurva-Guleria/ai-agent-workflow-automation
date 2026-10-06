@@ -1,0 +1,7 @@
+vendor_id,product_id,product_name,price,quantity
+V001,P001,Laptop,50000,10
+V001,P002,Wireless Mouse,1150,25
+V002,P003,Keyboard,1500,20
+V002,P004,Monitor,14000,0
+V003,P005,USB Cable,-500,15
+V003,P006,Webcam,2500,-5

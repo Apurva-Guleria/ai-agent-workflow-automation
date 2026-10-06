@@ -1,0 +1,6 @@
+task_id,task_name,required_skill,priority
+T001,Build REST API,Python,High
+T002,Create UI Design,UI/UX,Medium
+T003,Database Optimization,SQL,High
+T004,Create Automation Script,Python,Medium
+T005,Create Marketing Banner,UI/UX,Low

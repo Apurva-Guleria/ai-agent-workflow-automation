@@ -1,0 +1,6 @@
+employee_id,employee_name,skills,availability
+E001,Ankit,Python|Django|FastAPI,Available
+E002,Simran,UI/UX|Figma,Available
+E003,Rahul,Python|SQL|Django,Available
+E004,Neha,Python|Automation,Busy
+E005,Priya,UI/UX|Figma|Photoshop,Available

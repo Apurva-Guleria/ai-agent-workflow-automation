@@ -1,0 +1,8 @@
+product_id,product_name,current_stock,minimum_stock
+P001,Laptop,15,10
+P002,Wireless Mouse,3,10
+P003,Keyboard,4,8
+P004,Monitor,12,10
+P005,USB Cable,2,15
+
+
