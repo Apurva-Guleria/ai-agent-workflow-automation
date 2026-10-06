@@ -32,7 +32,7 @@ executor = WorkflowExecutor(
 
 
 # User request
-request = "Which products need restocking?"
+request = "Assign this urgent task to the best available developer."
 print("User Request:", request)
 
 # AI selects workflow

@@ -64,71 +64,48 @@ class ToolRegistry:
         return tool
 
     def get_tools_for_workflow(self, tools_required):
-
-        selected_tools = []
         tools_text = str(tools_required).lower()
 
-        # WF010 - Performance reporting
-        if (
-            "reporting" in tools_text
-            or "performance" in tools_text
-            or "metrics" in tools_text
-            or "log analysis" in tools_text
-        ):
-            selected_tools.append("performance_report")
-            return selected_tools
+        selected_tools = []
 
-        # CSV reader
-        if "csv" in tools_text:
+        if "csv" in tools_text or "csv/database reader" in tools_text:
             selected_tools.append("csv_reader")
 
-        # Calculator
+        if "excel" in tools_text:
+            selected_tools.append("vendor_file")
+
         if "calculator" in tools_text:
             selected_tools.append("calculator")
 
-        # Inventory
         if "inventory" in tools_text:
             selected_tools.append("inventory")
 
-        # Vendor file processing
-        if "vendor" in tools_text:
+        if "vendor" in tools_text or "data validation" in tools_text:
             selected_tools.append("vendor_file")
 
-        # Product description generation
         if "text validation" in tools_text:
             selected_tools.append("product_description")
 
-        # Duplicate product detection
         if "similarity" in tools_text:
             selected_tools.append("duplicate_product")
 
-        # Marketing campaign
         if "llm" in tools_text and "product data" in tools_text:
             selected_tools.append("marketing_campaign")
 
-        # SEO keyword classification
-        if (
-            "classification" in tools_text
-            or "mapping" in tools_text
-        ):
+        if "llm/classifier" in tools_text or "classification" in tools_text:
             selected_tools.append("seo_keyword")
 
-        # Employee task assignment
-        if (
-            "ranking" in tools_text
-            or "assignment" in tools_text
-        ):
+        if "ranking" in tools_text or "assignment" in tools_text:
             selected_tools.append("employee_task")
 
-        # Customer order status
-        if (
-            "database" in tools_text
-            or "api" in tools_text
-            or "order" in tools_text
-        ):
+        if "order database/api" in tools_text or "order" in tools_text:
             selected_tools.append("order_status")
 
-        return selected_tools
+        if "reporting" in tools_text or "performance" in tools_text or "metrics" in tools_text:
+            selected_tools.append("performance_report")
+
+        # Remove duplicates while preserving order
+        return list(dict.fromkeys(selected_tools))
 
     def execute_workflow(self, workflow_id, user_request=None):
 
@@ -225,7 +202,7 @@ class ToolRegistry:
             }
 
         match = re.search(
-            r"\bORD\d+\b",
+            r"\bORD-?\d+\b",
             user_request.upper()
         )
 
