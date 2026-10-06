@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from app.tools.csv_tool import CSVTool
 from app.tools.calculator import Calculator
 from app.tools.inventory_tool import InventoryTool
@@ -10,9 +12,17 @@ from app.tools.employee_task_tool import EmployeeTaskTool
 from app.tools.performance_report_tool import PerformanceReportTool
 from app.tools.order_status_tool import OrderStatusTool
 
+
 class ToolRegistry:
 
     def __init__(self):
+
+        # Project root directory
+        self.base_dir = Path(__file__).resolve().parent.parent.parent
+
+        # Data directory
+        self.data_dir = self.base_dir / "data"
+
         self.tools = {
             "csv_reader": CSVTool(),
             "calculator": Calculator(),
@@ -37,8 +47,6 @@ class ToolRegistry:
             "WF008": self.execute_seo_keyword_classification,
             "WF009": self.execute_employee_task_assignment,
             "WF010": self.execute_performance_report
-
-
         }
 
     def get_tool(self, tool_name):
@@ -51,14 +59,15 @@ class ToolRegistry:
         return tool
 
     def get_tools_for_workflow(self, tools_required):
+
         selected_tools = []
         tools_text = str(tools_required).lower()
 
         if (
-                "reporting" in tools_text
-                or "performance" in tools_text
-                or "metrics" in tools_text
-                or "log analysis" in tools_text
+            "reporting" in tools_text
+            or "performance" in tools_text
+            or "metrics" in tools_text
+            or "log analysis" in tools_text
         ):
             selected_tools.append("performance_report")
             return selected_tools
@@ -87,7 +96,11 @@ class ToolRegistry:
         if "ranking" in tools_text or "assignment" in tools_text:
             selected_tools.append("employee_task")
 
-        if "database" in tools_text or "api" in tools_text or "order" in tools_text:
+        if (
+            "database" in tools_text
+            or "api" in tools_text
+            or "order" in tools_text
+        ):
             selected_tools.append("order_status")
 
         return selected_tools
@@ -106,85 +119,150 @@ class ToolRegistry:
 
         return handler()
 
+    # ---------------------------------------------------------
+    # WF001 - Inventory Restock Check
+    # ---------------------------------------------------------
+
     def execute_inventory_restock(self):
 
         inventory_tool = self.get_tool("inventory")
 
+        file_path = self.data_dir / "inventory.csv"
+
         result = inventory_tool.find_restock_items(
-            "data/inventory.csv"
+            str(file_path)
         )
 
         return result.to_dict(orient="records")
+
+    # ---------------------------------------------------------
+    # WF002 - Product Price Validation
+    # ---------------------------------------------------------
 
     def execute_price_validation(self):
 
         price_tool = self.get_tool("price_validation")
 
+        file_path = self.data_dir / "products.csv"
+
         result = price_tool.find_price_differences(
-            "data/products.csv",
+            str(file_path),
             threshold=10
         )
 
         return result.to_dict(orient="records")
 
+    # ---------------------------------------------------------
+    # WF003 - Vendor File Processing
+    # ---------------------------------------------------------
+
     def execute_vendor_file_processing(self):
 
         vendor_tool = self.get_tool("vendor_file")
 
+        file_path = self.data_dir / "vendor_data.csv"
+
         result = vendor_tool.process_file(
-            "data/vendor_data.csv"
+            str(file_path)
         )
 
         return result
+
+    # ---------------------------------------------------------
+    # WF006 - Duplicate Product Detection
+    # ---------------------------------------------------------
 
     def execute_duplicate_detection(self):
+
         duplicate_tool = self.get_tool("duplicate_product")
 
+        file_path = self.data_dir / "duplicate_products.csv"
+
         result = duplicate_tool.find_duplicates(
-            "data/duplicate_products.csv"
+            str(file_path)
         )
 
         return result
+
+    # ---------------------------------------------------------
+    # WF007 - Marketing Campaign Brief
+    # ---------------------------------------------------------
 
     def execute_marketing_campaign(self):
+
         marketing_tool = self.get_tool("marketing_campaign")
 
+        file_path = self.data_dir / "marketing_campaign_input.csv"
+
         result = marketing_tool.generate_campaign_brief(
-            "data/marketing_campaign_input.csv"
+            str(file_path)
         )
 
         return result
+
+    # ---------------------------------------------------------
+    # WF008 - SEO Keyword Classification
+    # ---------------------------------------------------------
 
     def execute_seo_keyword_classification(self):
+
         seo_tool = self.get_tool("seo_keyword")
 
+        file_path = self.data_dir / "seo_keywords.csv"
+
         result = seo_tool.classify_keywords(
-            "data/seo_keywords.csv"
+            str(file_path)
         )
 
         return result
+
+    # ---------------------------------------------------------
+    # WF009 - Employee Task Assignment
+    # ---------------------------------------------------------
 
     def execute_employee_task_assignment(self):
+
         employee_tool = self.get_tool("employee_task")
 
+        tasks_file = self.data_dir / "employee_tasks.csv"
+        employees_file = self.data_dir / "employees.csv"
+
         result = employee_tool.assign_tasks(
-            "data/employee_tasks.csv",
-            "data/employees.csv"
+            str(tasks_file),
+            str(employees_file)
         )
 
         return result
+
+    # ---------------------------------------------------------
+    # WF010 - Workflow Performance Report
+    # ---------------------------------------------------------
 
     def execute_performance_report(self):
+
         performance_tool = self.get_tool("performance_report")
 
+        file_path = self.data_dir / "execution_logs.csv"
+
         result = performance_tool.generate_report(
-            "data/execution_logs.csv"
+            str(file_path)
         )
 
         return result
 
+    # ---------------------------------------------------------
+    # WF005 - Customer Order Status
+    # ---------------------------------------------------------
+
     def execute_order_status(self, user_request):
+
         import re
+
+        if not user_request:
+            return {
+                "status": "error",
+                "message": "Please provide an order ID."
+            }
 
         match = re.search(
             r"\bORD\d+\b",
@@ -201,7 +279,9 @@ class ToolRegistry:
 
         order_tool = self.get_tool("order_status")
 
+        file_path = self.data_dir / "orders.csv"
+
         return order_tool.get_order_status(
-            "data/orders.csv",
+            str(file_path),
             order_id
         )

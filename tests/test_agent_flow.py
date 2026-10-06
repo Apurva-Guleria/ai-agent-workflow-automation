@@ -6,8 +6,10 @@ from app.engine.tool_registry import ToolRegistry
 from app.tools.llm_tool import LLMTool
 
 
-# Load workflows from Excel
-loader = WorkflowLoader("data/workflows.xlsx")
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+loader = WorkflowLoader(str(BASE_DIR / "data" / "workflows.xlsx"))
 workflows = loader.load_workflows()
 
 # Workflow registry
