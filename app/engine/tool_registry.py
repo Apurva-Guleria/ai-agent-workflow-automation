@@ -5,6 +5,7 @@ from app.tools.calculator import Calculator
 from app.tools.inventory_tool import InventoryTool
 from app.tools.price_validation_tool import PriceValidationTool
 from app.tools.vendor_file_tool import VendorFileTool
+from app.tools.product_description_tool import ProductDescriptionTool
 from app.tools.duplicate_product_tool import DuplicateProductTool
 from app.tools.marketing_campaign_tool import MarketingCampaignTool
 from app.tools.seo_keyword_tool import SEOKeywordTool
@@ -23,30 +24,34 @@ class ToolRegistry:
         # Data directory
         self.data_dir = self.base_dir / "data"
 
+        # Reusable tools
         self.tools = {
             "csv_reader": CSVTool(),
             "calculator": Calculator(),
             "inventory": InventoryTool(),
             "price_validation": PriceValidationTool(),
             "vendor_file": VendorFileTool(),
+            "product_description": ProductDescriptionTool(),
             "duplicate_product": DuplicateProductTool(),
             "marketing_campaign": MarketingCampaignTool(),
             "seo_keyword": SEOKeywordTool(),
             "employee_task": EmployeeTaskTool(),
             "performance_report": PerformanceReportTool(),
-            "order_status": OrderStatusTool()
+            "order_status": OrderStatusTool(),
         }
 
+        # Workflow execution handlers
         self.workflow_handlers = {
             "WF001": self.execute_inventory_restock,
             "WF002": self.execute_price_validation,
             "WF003": self.execute_vendor_file_processing,
+            "WF004": self.execute_product_description,
             "WF005": self.execute_order_status,
             "WF006": self.execute_duplicate_detection,
             "WF007": self.execute_marketing_campaign,
             "WF008": self.execute_seo_keyword_classification,
             "WF009": self.execute_employee_task_assignment,
-            "WF010": self.execute_performance_report
+            "WF010": self.execute_performance_report,
         }
 
     def get_tool(self, tool_name):
@@ -63,6 +68,7 @@ class ToolRegistry:
         selected_tools = []
         tools_text = str(tools_required).lower()
 
+        # WF010 - Performance reporting
         if (
             "reporting" in tools_text
             or "performance" in tools_text
@@ -72,30 +78,49 @@ class ToolRegistry:
             selected_tools.append("performance_report")
             return selected_tools
 
+        # CSV reader
         if "csv" in tools_text:
             selected_tools.append("csv_reader")
 
+        # Calculator
         if "calculator" in tools_text:
             selected_tools.append("calculator")
 
+        # Inventory
         if "inventory" in tools_text:
             selected_tools.append("inventory")
 
+        # Vendor file processing
         if "vendor" in tools_text:
             selected_tools.append("vendor_file")
 
+        # Product description generation
+        if "text validation" in tools_text:
+            selected_tools.append("product_description")
+
+        # Duplicate product detection
         if "similarity" in tools_text:
             selected_tools.append("duplicate_product")
 
+        # Marketing campaign
         if "llm" in tools_text and "product data" in tools_text:
             selected_tools.append("marketing_campaign")
 
-        if "classification" in tools_text or "mapping" in tools_text:
+        # SEO keyword classification
+        if (
+            "classification" in tools_text
+            or "mapping" in tools_text
+        ):
             selected_tools.append("seo_keyword")
 
-        if "ranking" in tools_text or "assignment" in tools_text:
+        # Employee task assignment
+        if (
+            "ranking" in tools_text
+            or "assignment" in tools_text
+        ):
             selected_tools.append("employee_task")
 
+        # Customer order status
         if (
             "database" in tools_text
             or "api" in tools_text
@@ -107,6 +132,7 @@ class ToolRegistry:
 
     def execute_workflow(self, workflow_id, user_request=None):
 
+        # WF005 needs the user's order ID
         if workflow_id == "WF005":
             return self.execute_order_status(user_request)
 
@@ -167,6 +193,58 @@ class ToolRegistry:
         )
 
         return result
+
+    # ---------------------------------------------------------
+    # WF004 - Product Description Generator
+    # ---------------------------------------------------------
+
+    def execute_product_description(self):
+
+        product_tool = self.get_tool("product_description")
+
+        file_path = self.data_dir / "product_description_input.csv"
+
+        result = product_tool.generate_description(
+            str(file_path)
+        )
+
+        return result
+
+    # ---------------------------------------------------------
+    # WF005 - Customer Order Status
+    # ---------------------------------------------------------
+
+    def execute_order_status(self, user_request):
+
+        import re
+
+        if not user_request:
+            return {
+                "status": "error",
+                "message": "Please provide an order ID."
+            }
+
+        match = re.search(
+            r"\bORD\d+\b",
+            user_request.upper()
+        )
+
+        if not match:
+            return {
+                "status": "error",
+                "message": "Please provide a valid order ID."
+            }
+
+        order_id = match.group()
+
+        order_tool = self.get_tool("order_status")
+
+        file_path = self.data_dir / "orders.csv"
+
+        return order_tool.get_order_status(
+            str(file_path),
+            order_id
+        )
 
     # ---------------------------------------------------------
     # WF006 - Duplicate Product Detection
@@ -249,39 +327,3 @@ class ToolRegistry:
         )
 
         return result
-
-    # ---------------------------------------------------------
-    # WF005 - Customer Order Status
-    # ---------------------------------------------------------
-
-    def execute_order_status(self, user_request):
-
-        import re
-
-        if not user_request:
-            return {
-                "status": "error",
-                "message": "Please provide an order ID."
-            }
-
-        match = re.search(
-            r"\bORD\d+\b",
-            user_request.upper()
-        )
-
-        if not match:
-            return {
-                "status": "error",
-                "message": "Please provide a valid order ID."
-            }
-
-        order_id = match.group()
-
-        order_tool = self.get_tool("order_status")
-
-        file_path = self.data_dir / "orders.csv"
-
-        return order_tool.get_order_status(
-            str(file_path),
-            order_id
-        )
