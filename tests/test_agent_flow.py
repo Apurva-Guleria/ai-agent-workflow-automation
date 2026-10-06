@@ -32,7 +32,7 @@ executor = WorkflowExecutor(
 
 
 # User request
-request = "Generate product descriptions for the products."
+request = "Which products need restocking?"
 print("User Request:", request)
 
 # AI selects workflow
